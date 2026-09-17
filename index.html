@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="ITS Python 證照題庫：82 題複習與答題練習，自動保存答題紀錄。">
+  <title>ITS Python 題庫 v2.0｜複習模式</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./assets/styles.css">
+  <script defer src="./assets/questions.js"></script>
+  <script defer src="./assets/app.js"></script>
+</head>
+<body class="answer-mode">
+  <div class="app">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">CERTIPORT ITS PYTHON</div>
+        <div class="title-row">
+          <h1><span class="title-text">Python 題庫 <span class="version">v2.0</span></span></h1>
+          <button id="modeToggle" class="mode-switch" type="button" role="switch" aria-label="答題模式" aria-checked="false" title="切換答題模式" disabled>
+            <span class="mode-option review-option" aria-hidden="true">複習</span>
+            <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+            <span class="mode-option quiz-option" aria-hidden="true">答題</span>
+          </button>
+        </div>
+      </div>
+    </header>
+    <p id="storageNotice" class="storage-notice" role="alert" hidden></p>
+    <div class="context-bar">
+      <button id="searchToggle" class="search-toggle" type="button" aria-label="隱藏搜尋" title="隱藏搜尋" aria-expanded="true" aria-controls="searchSidebar" disabled>&lt;&lt;</button>
+      <div id="modeStatus" class="mode-status" role="status"></div>
+      <button id="clearRecords" class="secondary" type="button" hidden>清除紀錄</button>
+    </div>
+    <div id="quizControls" class="quiz-controls" hidden>
+      <label class="jump-control" for="questionJump">直接選題
+        <select id="questionJump" aria-label="直接選題與答題狀態"></select>
+      </label>
+      <span id="recordSummary"></span>
+      <span class="status-legend">🔴 答錯　🟢 答對　⚪ 未答</span>
+      <div class="track" aria-hidden="true"><div id="progressBar" class="bar"></div></div>
+    </div>
+    <div id="workspace"></div>
+    <noscript><section class="card">請啟用 JavaScript，以使用題庫、搜尋與答題紀錄。</section></noscript>
+    <p id="quizHint" class="page-hint" hidden>送出後保存答案並鎖定；清除紀錄後才能重答。紀錄保存在此裝置與瀏覽器，切換模式或關閉網頁不會清除。</p>
+  </div>
+</body>
+</html>
