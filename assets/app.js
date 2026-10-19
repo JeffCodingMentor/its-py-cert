@@ -24,10 +24,10 @@
   "隱藏搜尋": "Hide search",
   "顯示搜尋": "Show search",
   "找不到符合的題目。": "No matching questions.",
-  "複習模式": "Review mode",
+  "複習模式": "Study mode",
   "答題模式": "Quiz mode",
   "切換答題模式": "Switch to quiz mode",
-  "切換複習模式": "Switch to review mode",
+  "切換複習模式": "Switch to study mode",
   "確定清除全部答題紀錄嗎？所有題目將恢復未答，清除後無法復原。": "Clear all saved answers? Every question will become unanswered. This cannot be undone.",
   "無法清除本機紀錄，原有紀錄仍保留。請確認瀏覽器允許此網站存取儲存空間後再試。": "Unable to clear saved answers. Existing records have been kept. Check browser storage permissions and try again.",
   " · 已清除全部答題紀錄": " · All saved answers cleared",
@@ -51,8 +51,8 @@
   "pageTitle": "ITS Python Question Bank v3.2 | ",
   "summary": "Answered {answered} / {total} · Correct {correct} · Incorrect {wrong}",
   "quizStatus": "Quiz mode · Question {current} / {total}",
-  "reviewFiltered": "Review mode · Showing {count} / {total} questions",
-  "reviewStatus": "Review mode · {total} questions",
+  "reviewFiltered": "Study mode · Showing {count} / {total} questions",
+  "reviewStatus": "Study mode · {total} questions",
   "foundCount": "Found {count} questions",
   "allCount": "All {count} questions"
 };
