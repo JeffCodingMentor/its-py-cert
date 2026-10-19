@@ -19,7 +19,7 @@
   "答錯了，正確答案是：": "Incorrect. Correct answer: ",
   "。此題已作答並鎖定。": ". This answer is saved and locked.",
   "已作答": "Answered",
-  "送出答案": "Submit answer",
+  "送出答案": "Submit",
   "請先完成所有小題。": "Please answer every part first.",
   "隱藏搜尋": "Hide search",
   "顯示搜尋": "Show search",
