@@ -378,6 +378,9 @@ window.ITS_QUESTION_SOURCE_EN =
 "    _(2)_\n" +
 "        _(3)_\n" +
 "            rate = 20\n" +
+"        else:\n" +
+"            rate = 50\n" +
+"    return rate\n" +
 "```\n" +
 "\n" +
 "### Answer Area\n" +
