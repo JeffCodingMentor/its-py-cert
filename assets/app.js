@@ -1,11 +1,90 @@
 (function () {
   'use strict';
 
+  // Language lasts only for the current page load; answer storage stays shared.
+  let language = 'zh-Hant';
+  const english = {
+  "部分答題紀錄無法讀取，這些題目暫時顯示為未答；其他有效紀錄已保留。": "Some answer records could not be read. Those questions appear unanswered; other valid records have been kept.",
+  "無法讀取本機答題紀錄。仍可使用題庫；請確認瀏覽器允許此網站儲存資料。": "Unable to read saved answers. You can still practice; check that your browser allows storage for this site.",
+  "答題紀錄無法永久保存，目前僅保留在此頁面。關閉或重新整理前，請確認瀏覽器儲存空間與設定。": "Answers are only saved for this page visit. Check browser storage settings before closing or refreshing.",
+  "⚪ 未答": "⚪ Unanswered",
+  "🟢 答對": "🟢 Correct",
+  "🔴 答錯": "🔴 Incorrect",
+  " 題目 ": " Question ",
+  "題目 ": "Question ",
+  "，": ", ",
+  "選擇答案（複選）": "Select answers (multiple choices)",
+  "選擇答案": "Select an answer",
+  "答對了！此題已作答並鎖定。": "Correct! This answer is saved and locked.",
+  "答錯了，正確答案是：": "Incorrect. Correct answer: ",
+  "。此題已作答並鎖定。": ". This answer is saved and locked.",
+  "已作答": "Answered",
+  "送出答案": "Submit answer",
+  "請先完成所有小題。": "Please answer every part first.",
+  "隱藏搜尋": "Hide search",
+  "顯示搜尋": "Show search",
+  "找不到符合的題目。": "No matching questions.",
+  "複習模式": "Review mode",
+  "答題模式": "Quiz mode",
+  "切換答題模式": "Switch to quiz mode",
+  "切換複習模式": "Switch to review mode",
+  "確定清除全部答題紀錄嗎？所有題目將恢復未答，清除後無法復原。": "Clear all saved answers? Every question will become unanswered. This cannot be undone.",
+  "無法清除本機紀錄，原有紀錄仍保留。請確認瀏覽器允許此網站存取儲存空間後再試。": "Unable to clear saved answers. Existing records have been kept. Check browser storage permissions and try again.",
+  " · 已清除全部答題紀錄": " · All saved answers cleared",
+  "找到": "Found",
+  "全部": "All",
+  "上一題": "Previous",
+  "下一題": "Next",
+  "題目搜尋": "Question search",
+  "搜尋題目": "Search questions",
+  "搜尋題目或答案": "Search questions or answers",
+  "輸入文字後按 Enter": "Type and press Enter",
+  "搜尋": "Search",
+  "主題": "Topic",
+  "全部主題": "All topics",
+  "可搜尋題目、選項、主題及正確答案。": "Search questions, choices, topics, and correct answers.",
+  "搜尋結果": "Search results",
+  "找不到符合的題目": "No matching questions",
+  "請試試其他關鍵字，或將主題改為「全部主題」。": "Try another keyword or select All topics.",
+  "題庫載入錯誤": "Unable to load questions",
+  "請確認 assets 資料夾已完整上傳，再重新整理網頁。": "Check that the assets folder was uploaded completely, then refresh.",
+  "pageTitle": "ITS Python Question Bank v2.0 | ",
+  "summary": "Answered {answered} / {total} · Correct {correct} · Incorrect {wrong}",
+  "quizStatus": "Quiz mode · Question {current} / {total}",
+  "reviewFiltered": "Review mode · Showing {count} / {total} questions",
+  "reviewStatus": "Review mode · {total} questions",
+  "foundCount": "Found {count} questions",
+  "allCount": "All {count} questions"
+};
+  const chinese = {
+  "pageTitle": "ITS Python 題庫 v2.0｜",
+  "summary": "已答 {answered} / {total} 題 · 答對 {correct} · 答錯 {wrong}",
+  "quizStatus": "答題模式 · 第 {current} / {total} 題",
+  "reviewFiltered": "複習模式 · 顯示 {count} / {total} 題",
+  "reviewStatus": "複習模式 · 共 {total} 題",
+  "foundCount": "找到 {count} 題",
+  "allCount": "全部 {count} 題"
+};
+  function t(key, values = {}) {
+    const text = (language === 'en' ? english[key] : chinese[key]) || key;
+    return text.replace(/\{(\w+)\}/g, (_, name) => String(values[name]));
+  }
+  function applyLanguage() {
+    document.documentElement.lang = language;
+    document.querySelectorAll('[data-zh][data-en]').forEach((element) => {
+      element.textContent = language === 'en' ? element.dataset.en : element.dataset.zh;
+    });
+    document.getElementById('modeToggle').setAttribute('aria-label', t('答題模式'));
+    document.getElementById('questionJump').setAttribute('aria-label', language === 'en' ? 'Jump to a question and answer status' : '直接選題與答題狀態');
+    document.querySelector('meta[name="description"]').content = language === 'en' ? 'ITS Python certification: 82 questions for review and practice, with saved answers.' : 'ITS Python 證照題庫：82 題複習與答題練習，自動保存答題紀錄。';
+  }
+
+
 function parseAnswer(line){var parts=[],m,re=/\((\d+)\)\s*([A-Z])/g;while((m=re.exec(line)))parts.push({n:+m[1],letters:[m[2]]});if(parts.length)return{mode:"sub",parts:parts};var arrow=line.match(/[A-Z](?:\s*→\s*[A-Z])+/);if(arrow)return{mode:"sub",parts:arrow[0].split("→").map(function(x,i){return{n:i+1,letters:[x.trim()]}})};var letters=(line.match(/[A-Z]/g)||[]),u=[];letters.forEach(function(x){if(u.indexOf(x)<0)u.push(x)});return{mode:u.length>1?"multi":"single",parts:[{n:1,letters:u}]}}
 
 function parseQuestions(text){return text.split(/^## 題目\s+/m).slice(1).map(function(block){var title=(block.match(/^([^\n]+)/)||[0,""])[1].trim(),n=/^\d+$/.test(title)?+title:title,tm=block.match(/\*\*主題：\*\*\s*([^\n]+)/),am=block.match(/^\*\*正確答案：\*\*\s*(.+)$/m),al=am?am[1].trim():"",topic=tm?tm[1].trim().replace(new RegExp(String.fromCharCode(96),"g"),""):"",body=block.replace(/^[^\n]*\n/,"").replace(/\*\*主題：\*\*[^\n]*\n?/,"").replace(/^\*\*正確答案：\*\*.*$/m,"").trim();return{number:n,topic:topic,body:body,answer:parseAnswer(al)}})}
 
-function answerText(q){if(q.answer.mode==="sub")return q.answer.parts.map(function(p){return p.n+". "+p.letters[0]}).join("；");return q.answer.parts[0].letters.join("、")}
+function answerText(q){if(q.answer.mode==="sub")return q.answer.parts.map(function(p){return p.n+". "+p.letters[0]}).join(language === "en" ? "; " : "；");return q.answer.parts[0].letters.join(language === "en" ? ", " : "、")}
 
 function escapeHtml(value){return String(value).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;")}
 
@@ -54,7 +133,7 @@ function renderQuestionMarkdown(source) { return addCodeLineNumbers(renderQuesti
     byId('storageNotice').hidden = !message;
   }
 
-  function numberText(q) { return String(q.number).padStart(2, '0'); }
+  function numberText(q) { return language === "en" && String(q.number).startsWith("補充") ? "Supplement " + String(q.number).slice(2) : String(q.number).padStart(2, "0"); }
   function keyOf(q) { return String(q.number); }
   function sameLetters(a, b) { return a.slice().sort().join('') === b.slice().sort().join(''); }
   function isCorrect(q, selections) {
@@ -99,9 +178,9 @@ function renderQuestionMarkdown(source) { return addCodeLineNumbers(renderQuesti
           invalid = true;
         }
       }
-      if (invalid) notice('部分答題紀錄無法讀取，這些題目暫時顯示為未答；其他有效紀錄已保留。');
+      if (invalid) notice(t("部分答題紀錄無法讀取，這些題目暫時顯示為未答；其他有效紀錄已保留。"));
     } catch (error) {
-      notice('無法讀取本機答題紀錄。仍可使用題庫；請確認瀏覽器允許此網站儲存資料。');
+      notice(t("無法讀取本機答題紀錄。仍可使用題庫；請確認瀏覽器允許此網站儲存資料。"));
     }
     return result;
   }
@@ -111,29 +190,29 @@ function renderQuestionMarkdown(source) { return addCodeLineNumbers(renderQuesti
       localStorage.setItem(storageKey, JSON.stringify({ version: 1, answers: records }));
       notice('');
     } catch (error) {
-      notice('答題紀錄無法永久保存，目前僅保留在此頁面。關閉或重新整理前，請確認瀏覽器儲存空間與設定。');
+      notice(t("答題紀錄無法永久保存，目前僅保留在此頁面。關閉或重新整理前，請確認瀏覽器儲存空間與設定。"));
     }
   }
 
   function recordStatus(q) {
     const record = records[keyOf(q)];
-    return !record ? '⚪ 未答' : record.correct ? '🟢 答對' : '🔴 答錯';
+    return !record ? t("⚪ 未答") : record.correct ? t("🟢 答對") : t("🔴 答錯");
   }
 
   function updateQuizControls() {
     byId('questionJump').replaceChildren(...questions.map((q, index) => {
       const option = document.createElement('option');
       option.value = String(index);
-      option.textContent = recordStatus(q).split(' ')[0] + ' 題目 ' + numberText(q);
-      option.setAttribute('aria-label', '題目 ' + numberText(q) + '，' + recordStatus(q).split(' ')[1]);
+      option.textContent = recordStatus(q).split(' ')[0] + t(" 題目 ") + numberText(q);
+      option.setAttribute('aria-label', t("題目 ") + numberText(q) + t("，") + recordStatus(q).split(' ')[1]);
       return option;
     }));
     byId('questionJump').value = String(questionIndex);
     const answered = Object.keys(records).length;
     const correct = Object.values(records).filter((record) => record.correct).length;
-    byId('recordSummary').textContent = `已答 ${answered} / ${questions.length} 題 · 答對 ${correct} · 答錯 ${answered - correct}`;
+    byId('recordSummary').textContent = t("summary", {answered, total: questions.length, correct, wrong: answered - correct});
     byId('progressBar').style.width = `${answered / questions.length * 100}%`;
-    byId('modeStatus').textContent = `答題模式 · 第 ${questionIndex + 1} / ${questions.length} 題`;
+    byId('modeStatus').textContent = t("quizStatus", {current: questionIndex + 1, total: questions.length});
   }
 
   function createCard(q, index, review) {
@@ -143,9 +222,9 @@ function renderQuestionMarkdown(source) { return addCodeLineNumbers(renderQuesti
     card.className = 'card' + (review ? ' answer-card' : '');
     card.id = 'question-' + numberText(q);
     card.tabIndex = -1;
-    card.setAttribute('aria-label', '題目 ' + numberText(q));
+    card.setAttribute('aria-label', t("題目 ") + numberText(q));
     const color = topicColor(q.topic);
-    card.innerHTML = `<div class="meta"><span class="badge">題目 ${escapeHtml(numberText(q))}</span><span class="badge topic" style="background:${color[0]};color:${color[1]}">${escapeHtml(q.topic)}</span></div><div class="question-text">${renderQuestionMarkdown(q.body)}</div><div class="answer-panel"></div>`;
+    card.innerHTML = `<div class="meta"><span class="badge">${t("題目 ")}${escapeHtml(numberText(q))}</span><span class="badge topic" style="background:${color[0]};color:${color[1]}">${escapeHtml(q.topic)}</span></div><div class="question-text">${renderQuestionMarkdown(q.body)}</div><div class="answer-panel"></div>`;
     const panel = card.querySelector('.answer-panel');
     const groups = choiceGroups(q);
     q.answer.parts.forEach((part, partIndex) => {
@@ -155,7 +234,7 @@ function renderQuestionMarkdown(source) { return addCodeLineNumbers(renderQuesti
         fieldset.className = review || sameLetters(record.selections[partIndex], part.letters) ? 'correct' : 'wrong';
       }
       const legend = document.createElement('legend');
-      legend.textContent = q.answer.mode === 'sub' ? `${part.n}.` : q.answer.mode === 'multi' ? '選擇答案（複選）' : '選擇答案';
+      legend.textContent = q.answer.mode === 'sub' ? `${part.n}.` : q.answer.mode === 'multi' ? t("選擇答案（複選）") : t("選擇答案");
       fieldset.append(legend);
       const row = document.createElement('div');
       row.className = 'choices';
@@ -183,12 +262,12 @@ function renderQuestionMarkdown(source) { return addCodeLineNumbers(renderQuesti
       result.setAttribute('role', 'status');
       if (record) {
         result.className = 'result ' + (record.correct ? 'good' : 'bad');
-        result.textContent = record.correct ? '答對了！此題已作答並鎖定。' : '答錯了，正確答案是：' + answerText(q) + '。此題已作答並鎖定。';
+        result.textContent = record.correct ? t("答對了！此題已作答並鎖定。") : t("答錯了，正確答案是：") + answerText(q) + t("。此題已作答並鎖定。");
       }
       panel.append(result);
       const actions = document.createElement('div');
       actions.className = 'actions';
-      actions.innerHTML = `<button id="prev" class="secondary" type="button" ${index === 0 ? 'disabled' : ''}>上一題</button><button id="submit" class="primary" type="button" ${record ? 'disabled' : ''}>${record ? '已作答' : '送出答案'}</button><button id="next" class="secondary" type="button" ${index === questions.length - 1 ? 'disabled' : ''}>下一題</button>`;
+      actions.innerHTML = `<button id="prev" class="secondary" type="button" ${index === 0 ? 'disabled' : ''}>${t("上一題")}</button><button id="submit" class="primary" type="button" ${record ? 'disabled' : ''}>${record ? t("已作答") : t("送出答案")}</button><button id="next" class="secondary" type="button" ${index === questions.length - 1 ? 'disabled' : ''}>${t("下一題")}</button>`;
       panel.append(actions);
     }
     return card;
@@ -220,7 +299,7 @@ function renderQuestionMarkdown(source) { return addCodeLineNumbers(renderQuesti
       [...fieldset.querySelectorAll('input:checked')].map((input) => input.value));
     if (selections.some((letters) => !letters.length)) {
       byId('result').className = 'result bad';
-      byId('result').textContent = '請先完成所有小題。';
+      byId('result').textContent = t("請先完成所有小題。");
       return;
     }
     records[keyOf(q)] = { selections, correct: isCorrect(q, selections) };
@@ -238,7 +317,7 @@ function renderQuestionMarkdown(source) { return addCodeLineNumbers(renderQuesti
 
   function updateSearchToggle(expanded) {
     const button = byId('searchToggle');
-    const label = expanded ? '隱藏搜尋' : '顯示搜尋';
+    const label = expanded ? t("隱藏搜尋") : t("顯示搜尋");
     button.textContent = expanded ? '<<' : '>>';
     button.setAttribute('aria-expanded', String(expanded));
     button.setAttribute('aria-label', label);
@@ -247,15 +326,15 @@ function renderQuestionMarkdown(source) { return addCodeLineNumbers(renderQuesti
 
   function renderReview() {
     workspace.className = 'answer-layout';
-    workspace.innerHTML = `<aside id="searchSidebar" class="search-sidebar" aria-label="題目搜尋">
-      <h2>搜尋題目</h2><form id="searchForm" role="search">
-      <label class="search-label" for="searchInput">搜尋題目或答案</label>
-      <div class="search-row"><input id="searchInput" class="search-input" type="search" autocomplete="off" placeholder="輸入文字後按 Enter"><button class="search-button" type="submit">搜尋</button></div>
-      <label class="search-label topic-label" for="topicFilter">主題</label>
-      <select id="topicFilter" class="topic-select"><option value="">全部主題</option></select>
-      <p class="search-hint">可搜尋題目、選項、主題及正確答案。</p></form>
+    workspace.innerHTML = `<aside id="searchSidebar" class="search-sidebar" aria-label="${t("題目搜尋")}">
+      <h2>${t("搜尋題目")}</h2><form id="searchForm" role="search">
+      <label class="search-label" for="searchInput">${t("搜尋題目或答案")}</label>
+      <div class="search-row"><input id="searchInput" class="search-input" type="search" autocomplete="off" placeholder="${t("輸入文字後按 Enter")}"><button class="search-button" type="submit">${t("搜尋")}</button></div>
+      <label class="search-label topic-label" for="topicFilter">${t("主題")}</label>
+      <select id="topicFilter" class="topic-select"><option value="">${t("全部主題")}</option></select>
+      <p class="search-hint">${t("可搜尋題目、選項、主題及正確答案。")}</p></form>
       <p id="searchCount" class="search-count" role="status"></p>
-      <nav id="searchResults" class="search-results" aria-label="搜尋結果"></nav>
+      <nav id="searchResults" class="search-results" aria-label="${t("搜尋結果")}"></nav>
       </aside><main id="app" class="answer-content"></main>`;
     const main = byId('app');
     const fragment = document.createDocumentFragment();
@@ -264,7 +343,7 @@ function renderQuestionMarkdown(source) { return addCodeLineNumbers(renderQuesti
     const emptyState = document.createElement('section');
     emptyState.className = 'card summary';
     emptyState.hidden = true;
-    emptyState.innerHTML = '<h2>找不到符合的題目</h2><p>請試試其他關鍵字，或將主題改為「全部主題」。</p>';
+    emptyState.innerHTML = `<h2>${t("找不到符合的題目")}</h2><p>${t("請試試其他關鍵字，或將主題改為「全部主題」。")}</p>`;
     main.append(fragment, emptyState);
     const topics = [...new Set(questions.map((q) => topicKey(q.topic)))];
     topics.forEach((topic) => {
@@ -278,24 +357,24 @@ function renderQuestionMarkdown(source) { return addCodeLineNumbers(renderQuesti
       const topic = byId('topicFilter').value;
       const matches = questions.filter((q) => (!topic || topicKey(q.topic) === topic) &&
         (!query || [q.number, q.topic, q.body, answerText(q), q.answer.parts.map((p) => p.letters.join(' ')).join(' ')].join(' ').toLocaleLowerCase().includes(query)));
-      byId('searchCount').textContent = `${query || topic ? '找到' : '全部'} ${matches.length} 題`;
+      byId('searchCount').textContent = t(query || topic ? "foundCount" : "allCount", {count: matches.length});
       const matchedIds = new Set(matches.map(keyOf));
       cards.forEach((card, index) => { card.hidden = !matchedIds.has(keyOf(questions[index])); });
       emptyState.hidden = matches.length > 0;
       byId('modeStatus').textContent = query || topic
-        ? `複習模式 · 顯示 ${matches.length} / ${questions.length} 題`
-        : `複習模式 · 共 ${questions.length} 題`;
+        ? t("reviewFiltered", {count: matches.length, total: questions.length})
+        : t("reviewStatus", {total: questions.length});
       const results = byId('searchResults');
       results.replaceChildren();
       if (!matches.length) {
-        results.textContent = '找不到符合的題目。';
+        results.textContent = t("找不到符合的題目。");
       }
       matches.forEach((q) => {
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'search-result';
         const color = topicColor(q.topic);
-        button.innerHTML = `<span class="badge">題目 ${escapeHtml(numberText(q))}</span><span class="badge topic" style="background:${color[0]};color:${color[1]}">${escapeHtml(shortTopic(q.topic))}</span>`;
+        button.innerHTML = `<span class="badge">${t("題目 ")}${escapeHtml(numberText(q))}</span><span class="badge topic" style="background:${color[0]};color:${color[1]}">${escapeHtml(shortTopic(q.topic))}</span>`;
         button.onclick = () => {
           const target = document.getElementById('question-' + numberText(q));
           target.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -315,9 +394,9 @@ function renderQuestionMarkdown(source) { return addCodeLineNumbers(renderQuesti
   function renderMode() {
     const review = mode === 'review';
     document.body.classList.toggle('answer-mode', review);
-    document.title = 'ITS Python 題庫 v2.0｜' + (review ? '複習模式' : '答題模式');
+    document.title = t("pageTitle") + (review ? t("複習模式") : t("答題模式"));
     byId('modeToggle').setAttribute('aria-checked', String(!review));
-    byId('modeToggle').title = review ? '切換答題模式' : '切換複習模式';
+    byId('modeToggle').title = review ? t("切換答題模式") : t("切換複習模式");
     byId('searchToggle').hidden = !review;
     byId('clearRecords').hidden = review;
     byId('quizControls').hidden = review;
@@ -325,47 +404,60 @@ function renderQuestionMarkdown(source) { return addCodeLineNumbers(renderQuesti
     if (review) renderReview(); else renderQuiz();
   }
 
-  try {
-    if (typeof window.ITS_QUESTION_SOURCE !== 'string') throw new Error('Missing questions');
-    questions = parseQuestions(window.ITS_QUESTION_SOURCE);
-    if (!questions.length || new Set(questions.map(keyOf)).size !== questions.length ||
-      questions.some((q) => !q.answer.parts.length || q.answer.parts.some((part) => !part.letters.length))) {
-      throw new Error('Invalid questions');
-    }
-    initializeTopicColors(questions);
-    records = readRecords();
-    renderMode();
-    byId('modeToggle').disabled = false;
-    byId('searchToggle').disabled = false;
-  } catch (error) {
-    workspace.innerHTML = '<main class="card"><h2>題庫載入錯誤</h2><p>請確認 assets 資料夾已完整上傳，再重新整理網頁。</p></main>';
-    return;
-  }
-
-  byId('modeToggle').onclick = () => {
-    mode = mode === 'review' ? 'quiz' : 'review';
-    questionIndex = 0;
-    renderMode();
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  };
-  byId('questionJump').onchange = (event) => goToQuestion(Number(event.target.value));
-  byId('searchToggle').onclick = () => {
-    const sidebar = byId('searchSidebar');
-    sidebar.hidden = !sidebar.hidden;
-    workspace.classList.toggle('search-collapsed', sidebar.hidden);
-    updateSearchToggle(!sidebar.hidden);
-  };
-  byId('clearRecords').onclick = () => {
-    if (!window.confirm('確定清除全部答題紀錄嗎？所有題目將恢復未答，清除後無法復原。')) return;
+  function start(languageChoice) {
+    language = languageChoice;
+    applyLanguage();
+    byId("languageChooser").hidden = true;
+    byId("siteApp").hidden = false;
     try {
-      localStorage.removeItem(storageKey);
+      if (typeof window.ITS_QUESTION_SOURCE !== 'string') throw new Error('Missing questions');
+      questions = parseQuestions(language === "en" ? window.ITS_QUESTION_SOURCE_EN : window.ITS_QUESTION_SOURCE);
+      if (!questions.length || new Set(questions.map(keyOf)).size !== questions.length ||
+        questions.some((q) => !q.answer.parts.length || q.answer.parts.some((part) => !part.letters.length))) {
+        throw new Error('Invalid questions');
+      }
+      initializeTopicColors(questions);
+      records = readRecords();
+      renderMode();
+      byId('modeToggle').disabled = false;
+      byId('searchToggle').disabled = false;
+      byId("modeToggle").focus({ preventScroll: true });
     } catch (error) {
-      notice('無法清除本機紀錄，原有紀錄仍保留。請確認瀏覽器允許此網站存取儲存空間後再試。');
+      workspace.innerHTML = `<main class="card"><h2>${t("題庫載入錯誤")}</h2><p>${t("請確認 assets 資料夾已完整上傳，再重新整理網頁。")}</p></main>`;
       return;
     }
-    records = Object.create(null);
-    notice('');
-    renderQuiz();
-    byId('modeStatus').textContent += ' · 已清除全部答題紀錄';
-  };
+
+    byId('modeToggle').onclick = () => {
+      mode = mode === 'review' ? 'quiz' : 'review';
+      questionIndex = 0;
+      renderMode();
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    };
+    byId('questionJump').onchange = (event) => goToQuestion(Number(event.target.value));
+    byId('searchToggle').onclick = () => {
+      const sidebar = byId('searchSidebar');
+      sidebar.hidden = !sidebar.hidden;
+      workspace.classList.toggle('search-collapsed', sidebar.hidden);
+      updateSearchToggle(!sidebar.hidden);
+    };
+    byId('clearRecords').onclick = () => {
+      if (!window.confirm(t("確定清除全部答題紀錄嗎？所有題目將恢復未答，清除後無法復原。"))) return;
+      try {
+        localStorage.removeItem(storageKey);
+      } catch (error) {
+        notice(t("無法清除本機紀錄，原有紀錄仍保留。請確認瀏覽器允許此網站存取儲存空間後再試。"));
+        return;
+      }
+      records = Object.create(null);
+      notice('');
+      renderQuiz();
+      byId('modeStatus').textContent += t(" · 已清除全部答題紀錄");
+    };
+  }
+  window.addEventListener("pageshow", (event) => {
+    if (event.persisted) window.location.reload();
+  });
+  document.querySelectorAll("[data-language]").forEach((button) => {
+    button.onclick = () => start(button.dataset.language);
+  });
 })();

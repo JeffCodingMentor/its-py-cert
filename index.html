@@ -4,23 +4,36 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="ITS Python 證照題庫：82 題複習與答題練習，自動保存答題紀錄。">
-  <title>ITS Python 題庫 v2.0｜複習模式</title>
+  <title>ITS Python｜選擇語言 / Choose language</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="./assets/styles.css">
   <script defer src="./assets/questions.js"></script>
+  <script defer src="./assets/questions-en.js"></script>
   <script defer src="./assets/app.js"></script>
 </head>
 <body class="answer-mode">
-  <div class="app">
+  <main id="languageChooser" class="language-chooser" aria-labelledby="languageTitle">
+    <section class="card">
+      <div class="eyebrow">CERTIPORT ITS PYTHON</div>
+      <h1 id="languageTitle">選擇語言 / <span lang="en">Choose your language</span></h1>
+      <p>請選擇題庫與介面的語言。<br><span lang="en">Choose a language for the questions and interface.</span></p>
+      <div class="language-actions">
+        <button type="button" class="primary" data-language="zh-Hant" lang="zh-Hant">繁體中文</button>
+        <button type="button" class="primary" data-language="en" lang="en">English</button>
+      </div>
+      <noscript><p>請啟用 JavaScript。<span lang="en">Please enable JavaScript.</span></p></noscript>
+    </section>
+  </main>
+  <div id="siteApp" class="app" hidden>
     <header class="topbar">
       <div>
         <div class="eyebrow">CERTIPORT ITS PYTHON</div>
         <div class="title-row">
-          <h1><span class="title-text">Python 題庫 <span class="version">v2.0</span></span></h1>
+          <h1><span class="title-text"><span data-zh="Python 題庫 " data-en="Python Question Bank ">Python 題庫 </span><span class="version">v2.0</span></span></h1>
           <button id="modeToggle" class="mode-switch" type="button" role="switch" aria-label="答題模式" aria-checked="false" title="切換答題模式" disabled>
-            <span class="mode-option review-option" aria-hidden="true">複習</span>
+            <span class="mode-option review-option" aria-hidden="true" data-zh="複習" data-en="Review">複習</span>
             <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
-            <span class="mode-option quiz-option" aria-hidden="true">答題</span>
+            <span class="mode-option quiz-option" aria-hidden="true" data-zh="答題" data-en="Quiz">答題</span>
           </button>
         </div>
       </div>
@@ -29,19 +42,19 @@
     <div class="context-bar">
       <button id="searchToggle" class="search-toggle" type="button" aria-label="隱藏搜尋" title="隱藏搜尋" aria-expanded="true" aria-controls="searchSidebar" disabled>&lt;&lt;</button>
       <div id="modeStatus" class="mode-status" role="status"></div>
-      <button id="clearRecords" class="secondary" type="button" hidden>清除紀錄</button>
+      <button id="clearRecords" class="secondary" type="button" hidden data-zh="清除紀錄" data-en="Clear answers">清除紀錄</button>
     </div>
     <div id="quizControls" class="quiz-controls" hidden>
-      <label class="jump-control" for="questionJump">直接選題
+      <label class="jump-control" for="questionJump"><span data-zh="直接選題" data-en="Jump to question">直接選題</span>
         <select id="questionJump" aria-label="直接選題與答題狀態"></select>
       </label>
       <span id="recordSummary"></span>
-      <span class="status-legend">🔴 答錯　🟢 答對　⚪ 未答</span>
+      <span class="status-legend" data-zh="🔴 答錯　🟢 答對　⚪ 未答" data-en="🔴 Incorrect　🟢 Correct　⚪ Unanswered">🔴 答錯　🟢 答對　⚪ 未答</span>
       <div class="track" aria-hidden="true"><div id="progressBar" class="bar"></div></div>
     </div>
     <div id="workspace"></div>
     <noscript><section class="card">請啟用 JavaScript，以使用題庫、搜尋與答題紀錄。</section></noscript>
-    <p id="quizHint" class="page-hint" hidden>送出後保存答案並鎖定；清除紀錄後才能重答。紀錄保存在此裝置與瀏覽器，切換模式或關閉網頁不會清除。</p>
+    <p id="quizHint" class="page-hint" hidden data-zh="送出後保存答案並鎖定；清除紀錄後才能重答。紀錄保存在此裝置與瀏覽器，切換模式或關閉網頁不會清除。" data-en="Submitted answers are saved and locked. Clear saved answers to try again. Records stay in this browser on this device, including after switching modes or closing the page.">送出後保存答案並鎖定；清除紀錄後才能重答。紀錄保存在此裝置與瀏覽器，切換模式或關閉網頁不會清除。</p>
   </div>
 </body>
 </html>
