@@ -48,7 +48,7 @@
   "請試試其他關鍵字，或將主題改為「全部主題」。": "Try another keyword or select All topics.",
   "題庫載入錯誤": "Unable to load questions",
   "請確認 assets 資料夾已完整上傳，再重新整理網頁。": "Check that the assets folder was uploaded completely, then refresh.",
-  "pageTitle": "ITS Python Question Bank v3.0 | ",
+  "pageTitle": "ITS Python Question Bank v3.2 | ",
   "summary": "Answered {answered} / {total} · Correct {correct} · Incorrect {wrong}",
   "quizStatus": "Quiz mode · Question {current} / {total}",
   "reviewFiltered": "Review mode · Showing {count} / {total} questions",
@@ -57,7 +57,7 @@
   "allCount": "All {count} questions"
 };
   const chinese = {
-  "pageTitle": "ITS Python 題庫 v3.0｜",
+  "pageTitle": "ITS Python 題庫 v3.2｜",
   "summary": "已答 {answered} / {total} 題 · 答對 {correct} · 答錯 {wrong}",
   "quizStatus": "答題模式 · 第 {current} / {total} 題",
   "reviewFiltered": "複習模式 · 顯示 {count} / {total} 題",

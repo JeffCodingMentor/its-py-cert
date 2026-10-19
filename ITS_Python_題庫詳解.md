@@ -1,8 +1,8 @@
 # ITS Python 題庫詳解 / Concise Bilingual Explanations
 
-適用：網站 v3.0，共 82 題；Q78–Q82 對應原補充1–補充5。每題的中英文說明可依網頁語言擇一顯示。
+適用：網站 v3.2，共 82 題；Q78–Q82 對應原補充1–補充5。每題的中英文說明可依網頁語言擇一顯示。
 
-For website v3.0, covering all 82 questions. Q78–Q82 are the five former supplements. Display only the explanation matching the selected language.
+For website v3.2, covering all 82 questions. Q78–Q82 are the five former supplements. Display only the explanation matching the selected language.
 
 「題庫答案」沿用現有網站；原題有筆誤、條件不足或答案爭議時，詳解會簡短註明 Python 的實際行為。本檔不變更網站題目或判分。
 
