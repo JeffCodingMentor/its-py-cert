@@ -229,6 +229,15 @@ function renderQuestionMarkdown(source) { return addCodeLineNumbers(renderQuesti
     const color = topicColor(q.topic);
     card.innerHTML = `<div class="meta"><span class="badge">${t("題目 ")}${escapeHtml(numberText(q))}</span><span class="badge topic" style="background:${color[0]};color:${color[1]}">${escapeHtml(q.topic)}</span></div><div class="question-text">${renderQuestionMarkdown(q.body)}</div><div class="answer-panel"></div>`;
     const panel = card.querySelector('.answer-panel');
+    const answers = review ? document.createElement('div') : panel;
+    if (review) {
+      panel.classList.add('review-answer-panel');
+      answers.className = 'review-answers';
+      answers.tabIndex = 0;
+      answers.setAttribute('role', 'group');
+      answers.setAttribute('aria-label', language === 'en' ? 'Correct answers' : '正確答案');
+      panel.append(answers);
+    }
     const groups = choiceGroups(q);
     q.answer.parts.forEach((part, partIndex) => {
       const fieldset = document.createElement('fieldset');
@@ -257,8 +266,41 @@ function renderQuestionMarkdown(source) { return addCodeLineNumbers(renderQuesti
         row.append(wrap);
       });
       fieldset.append(row);
-      panel.append(fieldset);
+      answers.append(fieldset);
     });
+    if (review) {
+      const label = language === 'en' ? 'Explanation' : '詳解';
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'explanation-toggle';
+      button.textContent = label;
+      button.setAttribute('aria-expanded', 'false');
+      const explanation = document.createElement('div');
+      explanation.className = 'explanation-content';
+      explanation.id = 'explanation-' + numberText(q);
+      explanation.hidden = true;
+      explanation.tabIndex = 0;
+      explanation.setAttribute('role', 'region');
+      explanation.setAttribute('aria-label', label);
+      button.setAttribute('aria-controls', explanation.id);
+      let rendered = false;
+      button.onclick = () => {
+        const expanded = button.getAttribute('aria-expanded') !== 'true';
+        if (expanded && !rendered) {
+          const text = window.ITS_EXPLANATIONS?.[keyOf(q)]?.[language];
+          explanation.innerHTML = markdownToHtml(text || (language === 'en'
+            ? 'Unable to load the explanation. Please refresh the page.'
+            : '詳解暫時無法載入，請重新整理頁面。'));
+          rendered = true;
+        }
+        button.setAttribute('aria-expanded', String(expanded));
+        explanation.hidden = !expanded;
+        panel.classList.toggle('is-explanation-open', expanded);
+        if (!expanded) panel.style.removeProperty('--review-panel-height');
+        fitReviewPanels();
+      };
+      panel.append(button, explanation);
+    }
     if (!review) {
       const result = document.createElement('div');
       result.id = 'result';
@@ -343,6 +385,24 @@ function renderQuestionMarkdown(source) { return addCodeLineNumbers(renderQuesti
     }
     const top = Math.max(18, sidebar.getBoundingClientRect().top);
     sidebar.style.maxHeight = Math.max(0, window.innerHeight - top - 18) + 'px';
+  }
+
+  function fitReviewPanels() {
+    workspace.querySelectorAll('.review-answer-panel.is-explanation-open').forEach((panel) => {
+      if (window.innerWidth <= 900) {
+        panel.style.removeProperty('--review-panel-height');
+        return;
+      }
+      const rect = panel.getBoundingClientRect();
+      if (rect.bottom < 0 || rect.top >= window.innerHeight) return;
+      const height = Math.max(180, window.innerHeight - Math.max(18, rect.top) - 18);
+      panel.style.setProperty('--review-panel-height', height + 'px');
+    });
+  }
+
+  function fitReviewLayout() {
+    fitSearchSidebar();
+    fitReviewPanels();
   }
 
   function renderReview() {
@@ -480,8 +540,8 @@ function renderQuestionMarkdown(source) { return addCodeLineNumbers(renderQuesti
   window.addEventListener("pageshow", (event) => {
     if (event.persisted) window.location.reload();
   });
-  window.addEventListener('resize', fitSearchSidebar);
-  window.addEventListener('scroll', fitSearchSidebar, { passive: true });
+  window.addEventListener('resize', fitReviewLayout);
+  window.addEventListener('scroll', fitReviewLayout, { passive: true });
   document.querySelectorAll("[data-language]").forEach((button) => {
     button.onclick = () => start(button.dataset.language);
   });

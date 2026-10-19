@@ -63,6 +63,7 @@ body.answer-mode{overflow-x:hidden}
 
 /* 單一入口、模式工具列及答題紀錄。 */
 [hidden]{display:none!important}
+
 .app{width:94vw;max-width:1600px;padding-top:28px}
 .topbar{align-items:center;gap:20px}
 .title-row{display:flex;align-items:center;flex-wrap:wrap;gap:14px;margin-top:4px}
@@ -138,3 +139,25 @@ html[lang="en"] .status-legend{white-space:normal}
 html[lang="en"] .search-result{flex-wrap:nowrap;gap:5px;padding:7px 4px}
 html[lang="en"] .search-result .badge{flex-shrink:0;padding:2px 6px;white-space:nowrap;font-size:.8rem}
 [hidden]{display:none!important}
+
+/* 複習模式：右側答案與可收合詳解。 */
+.explanation-toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;flex-shrink:0;margin-top:14px;padding:10px 14px;border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;text-align:left;font-size:.94rem}
+.explanation-toggle::after{content:"▾";font-size:.85rem}
+.explanation-toggle[aria-expanded="true"]{background:#dbeafe;border-color:#93c5fd}
+.explanation-toggle[aria-expanded="true"]::after{content:"▴"}
+.explanation-content{min-height:0;margin-top:10px;padding:14px;background:#eff6ff;border-left:3px solid #2563eb;border-radius:10px;color:var(--ink);font-size:.92rem;line-height:1.8;overflow-wrap:anywhere}
+.explanation-content p{margin:0 0 .75em}
+.explanation-content p:last-child{margin-bottom:0}
+.explanation-content code{padding:.1em .25em;background:#dbeafe;border-radius:4px;color:#1e40af;font-family:ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+.explanation-content:focus-visible,.review-answers:focus-visible{outline:3px solid #93c5fd;outline-offset:3px}
+@media(min-width:901px){
+  .answer-mode .answer-card{grid-template-columns:minmax(0,3fr) minmax(0,2fr);align-items:start}
+  .answer-mode .answer-card>.review-answer-panel{position:sticky;top:18px;align-self:start;display:flex;flex-direction:column;max-height:var(--review-panel-height,calc(100vh - 36px));max-height:var(--review-panel-height,calc(100dvh - 36px));overflow:visible}
+  .answer-mode .review-answers{min-height:0;flex:0 1 auto;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+  .answer-mode .review-answers fieldset:last-child{margin-bottom:0}
+  .answer-mode .explanation-content{flex:0 1 auto;max-height:40vh;max-height:40dvh;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+}
+@media(max-width:900px){
+  .answer-mode .answer-card>.review-answer-panel{position:static;max-height:none;overflow:visible}
+  .answer-mode .review-answers,.answer-mode .explanation-content{max-height:none;overflow:visible}
+}
