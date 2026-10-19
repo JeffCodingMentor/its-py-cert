@@ -133,7 +133,10 @@ function renderQuestionMarkdown(source) { return addCodeLineNumbers(renderQuesti
     byId('storageNotice').hidden = !message;
   }
 
-  function numberText(q) { return language === "en" && String(q.number).startsWith("補充") ? "Supplement " + String(q.number).slice(2) : String(q.number).padStart(2, "0"); }
+  function numberText(q) {
+    const supplement = /^補充(\d+)$/.exec(String(q.number));
+    return String(supplement ? 77 + Number(supplement[1]) : q.number).padStart(2, '0');
+  }
   function keyOf(q) { return String(q.number); }
   function sameLetters(a, b) { return a.slice().sort().join('') === b.slice().sort().join(''); }
   function isCorrect(q, selections) {
@@ -311,6 +314,13 @@ function renderQuestionMarkdown(source) { return addCodeLineNumbers(renderQuesti
 
   function shortTopic(value) {
     const base = topicKey(value);
+    if (language === 'en') {
+      return ({
+        'Conditionals and Loop Control': 'Conditions, Loop',
+        'Custom Functions': 'Functions',
+        'Error Handling and Unit Testing': 'Error, Testing'
+      })[base] || base.replace(/\s+and\s+/gi, ', ');
+    }
     return ({ '變數與資料型態': '變數與型態', '字串與資料串列': '字串與串列',
       '判斷式與迴圈流程控制': '流程控制', '錯誤處理與單元測試': '錯誤與測試' })[base] || base;
   }
@@ -322,6 +332,17 @@ function renderQuestionMarkdown(source) { return addCodeLineNumbers(renderQuesti
     button.setAttribute('aria-expanded', String(expanded));
     button.setAttribute('aria-label', label);
     button.title = label;
+  }
+
+  function fitSearchSidebar() {
+    const sidebar = byId('searchSidebar');
+    if (!sidebar || sidebar.hidden) return;
+    if (window.innerWidth <= 900) {
+      sidebar.style.removeProperty('max-height');
+      return;
+    }
+    const top = Math.max(18, sidebar.getBoundingClientRect().top);
+    sidebar.style.maxHeight = Math.max(0, window.innerHeight - top - 18) + 'px';
   }
 
   function renderReview() {
@@ -356,7 +377,7 @@ function renderQuestionMarkdown(source) { return addCodeLineNumbers(renderQuesti
       const query = byId('searchInput').value.trim().toLocaleLowerCase();
       const topic = byId('topicFilter').value;
       const matches = questions.filter((q) => (!topic || topicKey(q.topic) === topic) &&
-        (!query || [q.number, q.topic, q.body, answerText(q), q.answer.parts.map((p) => p.letters.join(' ')).join(' ')].join(' ').toLocaleLowerCase().includes(query)));
+        (!query || [numberText(q), q.number, q.topic, shortTopic(q.topic), q.body, answerText(q), q.answer.parts.map((p) => p.letters.join(' ')).join(' ')].join(' ').toLocaleLowerCase().includes(query)));
       byId('searchCount').textContent = t(query || topic ? "foundCount" : "allCount", {count: matches.length});
       const matchedIds = new Set(matches.map(keyOf));
       cards.forEach((card, index) => { card.hidden = !matchedIds.has(keyOf(questions[index])); });
@@ -374,7 +395,7 @@ function renderQuestionMarkdown(source) { return addCodeLineNumbers(renderQuesti
         button.type = 'button';
         button.className = 'search-result';
         const color = topicColor(q.topic);
-        button.innerHTML = `<span class="badge">${t("題目 ")}${escapeHtml(numberText(q))}</span><span class="badge topic" style="background:${color[0]};color:${color[1]}">${escapeHtml(shortTopic(q.topic))}</span>`;
+        button.innerHTML = `<span class="badge">${language === 'en' ? 'Q' : t("題目 ")}${escapeHtml(numberText(q))}</span><span class="badge topic" style="background:${color[0]};color:${color[1]}">${escapeHtml(shortTopic(q.topic))}</span>`;
         button.onclick = () => {
           const target = document.getElementById('question-' + numberText(q));
           target.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -389,6 +410,7 @@ function renderQuestionMarkdown(source) { return addCodeLineNumbers(renderQuesti
     byId('searchInput').onsearch = search;
     updateSearchToggle(true);
     search();
+    fitSearchSidebar();
   }
 
   function renderMode() {
@@ -439,6 +461,7 @@ function renderQuestionMarkdown(source) { return addCodeLineNumbers(renderQuesti
       sidebar.hidden = !sidebar.hidden;
       workspace.classList.toggle('search-collapsed', sidebar.hidden);
       updateSearchToggle(!sidebar.hidden);
+      fitSearchSidebar();
     };
     byId('clearRecords').onclick = () => {
       if (!window.confirm(t("確定清除全部答題紀錄嗎？所有題目將恢復未答，清除後無法復原。"))) return;
@@ -457,6 +480,8 @@ function renderQuestionMarkdown(source) { return addCodeLineNumbers(renderQuesti
   window.addEventListener("pageshow", (event) => {
     if (event.persisted) window.location.reload();
   });
+  window.addEventListener('resize', fitSearchSidebar);
+  window.addEventListener('scroll', fitSearchSidebar, { passive: true });
   document.querySelectorAll("[data-language]").forEach((button) => {
     button.onclick = () => start(button.dataset.language);
   });
