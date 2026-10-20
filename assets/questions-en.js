@@ -241,7 +241,7 @@ window.ITS_QUESTION_SOURCE_EN =
 "2. Code for blank (2):\n" +
 "  - A. `console.input(\"The average star rating for the new coffee is:\")`\n" +
 "  - B. `output(\"The average star rating for the new coffee is:\")`\n" +
-"  - C. `print(\"The average star rating for the new coffee is: {}\"`\n" +
+"  - C. `print(\"The average star rating for the new coffee is:\"`\n" +
 "  - D. `printline(\"The average star rating for the new coffee is:\")`\n" +
 "3. Code for blank (3):\n" +
 "  - A. `{average, '.2f}`\n" +

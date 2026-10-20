@@ -237,7 +237,7 @@ window.ITS_QUESTION_SOURCE =
 "2. 第(2)個空格的程式碼應為：\n" +
 "  - A. `console.input(\"The average star rating for the new coffee is:\")`\n" +
 "  - B. `output(\"The average star rating for the new coffee is:\")`\n" +
-"  - C. `print(\"The average star rating for the new coffee is: {}\"`\n" +
+"  - C. `print(\"The average star rating for the new coffee is:\"`\n" +
 "  - D. `printline(\"The average star rating for the new coffee is:\")`\n" +
 "3. 第(3)個空格的程式碼應為：\n" +
 "  - A. `{average, '.2f}`\n" +

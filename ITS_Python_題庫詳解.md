@@ -59,8 +59,8 @@ For website v3.2, covering all 82 questions. Q78–Q82 are the five former suppl
 ## Q09
 
 - 題庫答案 / Answer key：(1) A；(2) C；(3) D
-- 中文：用 `float(input(...))` 讀入數值，遇到 `-1` 停止；`format(average, '.2f')` 會產生兩位小數的字串，再用 `+` 串接輸出。注意 C 中的 `{}` 不會被代換，會原樣顯示。
-- English: Read numeric ratings with `float(input(...))` and stop at `-1`. Built-in `format(average, '.2f')` returns a string with two decimal places; `+` joins it to the message. The `{}` in option C remains literal rather than being replaced.
+- 中文：用 `float(input(...))` 讀入數值，遇到 `-1` 停止；`format(average, '.2f')` 會產生兩位小數的字串，再用 `+` 與提示文字串接輸出。`.2f` 適用於這裡的浮點數，`.2d` 則無效。
+- English: Read numeric ratings with `float(input(...))` and stop at `-1`. Built-in `format(average, '.2f')` returns a string with two decimal places; `+` joins it to the message. `.2d` is invalid for these floating-point values.
 
 ## Q10
 
