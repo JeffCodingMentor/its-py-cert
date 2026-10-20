@@ -77,6 +77,6 @@
 - 中英文更新後執行 `node tests/question-parity.cjs`，確認 82 題的識別碼、答案與選項群組一致。
 - 修改題目時保留固定題號（含「補充1」至「補充5」），不要以陣列位置替代題號。變更答案或大幅更換題庫時應同步考慮既有作答紀錄的相容性。
 - `assets/app.js` 負責呈現、搜尋、判分與保存；`assets/styles.css` 負責桌面及手機版面。
-- `ITS_Python_題庫詳解.md` 是中英文詳解來源。修改後執行 `python scripts/build-explanations.py`，更新靜態資料 `assets/explanations.js`，再執行 `python scripts/build-explanations.py --check` 與 `node tests/question-parity.cjs` 檢查內容。網站執行時不需要 Python。
+- 中英文詳解原稿保留在儲存庫外的上一層 `../ITS_Python_題庫詳解.md`，不上傳 GitHub。修改原稿後執行 `python scripts/build-explanations.py`，更新網頁使用的靜態資料 `assets/explanations.js`，再執行 `python scripts/build-explanations.py --check` 確認與原稿一致；原稿位於其他位置時，可加上 `--source "原稿路徑"`。`node tests/question-parity.cjs` 不需要原稿即可檢查 82 題的中英文資料完整性。網站執行時不需要 Python。
 - localStorage 使用 `its-py-cert:answers:v1:` 加網站所在目錄作為專屬鍵值；「清除紀錄」只刪除此網站題庫的紀錄。
 - 原始兩個 HTML 保留在上一層，額外備份位於上一層 `archive/pre-github-日期時間/`，不需上傳。

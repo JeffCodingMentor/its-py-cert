@@ -5,10 +5,11 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_SOURCE = ROOT.parent / 'ITS_Python_題庫詳解.md'
 
 
-def build():
-    source = (ROOT / 'ITS_Python_題庫詳解.md').read_text(encoding='utf-8')
+def build(source_path=DEFAULT_SOURCE):
+    source = source_path.read_text(encoding='utf-8')
     sections = re.split(r'^## Q(\d{2})\s*$', source, flags=re.MULTILINE)
     numbers = [int(sections[i]) for i in range(1, len(sections), 2)]
     if numbers != list(range(1, 83)):
@@ -30,9 +31,13 @@ def build():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--check', action='store_true', help='Check that generated data is current')
+    parser.add_argument('--source', type=Path, default=DEFAULT_SOURCE,
+                        help='Local Markdown source (default: parent directory of the repository)')
     args = parser.parse_args()
+    if not args.source.is_file():
+        parser.error('Local explanation source not found; specify its path with --source')
     output = ROOT / 'assets' / 'explanations.js'
-    generated = build()
+    generated = build(args.source)
     if args.check:
         if not output.exists() or output.read_text(encoding='utf-8') != generated:
             raise SystemExit('Explanation data is out of date; run python scripts/build-explanations.py')
