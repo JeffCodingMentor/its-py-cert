@@ -33,8 +33,8 @@ window.ITS_EXPLANATIONS = {
     "en": "`%B` gives the full month name, `%d` the two-digit day, and `%y` the two-digit year. The key is C, but an English locale produces `April-07-17`, not uppercase `APRIL`."
   },
   "9": {
-    "zh-Hant": "先用 `float(input(...))` 讀入評分，遇到 `-1` 停止。新版 D 的 `.format(average, '.2f')` 不會設定小數位數；須把格式寫進 `{:.2f}`，如 `\"{:.2f}\".format(average)`。",
-    "en": "Read ratings with `float(input(...))` and stop at `-1`. Updated option D, `.format(average, '.2f')`, does not set decimal precision. Put the format inside `{:.2f}` instead: `\"{:.2f}\".format(average)`."
+    "zh-Hant": "用 `float(input(...))` 讀入數值，遇到 `-1` 停止；`format(average, '.2f')` 會產生兩位小數的字串，再用 `+` 串接輸出。注意 C 中的 `{}` 不會被代換，會原樣顯示。",
+    "en": "Read numeric ratings with `float(input(...))` and stop at `-1`. Built-in `format(average, '.2f')` returns a string with two decimal places; `+` joins it to the message. The `{}` in option C remains literal rather than being replaced."
   },
   "10": {
     "zh-Hant": "用 `==` 比較清單內容，再用 `else:` 處理不相等的情況。`=` 是指派，不能代替相等比較。",
