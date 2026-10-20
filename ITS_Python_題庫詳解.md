@@ -59,8 +59,8 @@ For website v3.2, covering all 82 questions. Q78–Q82 are the five former suppl
 ## Q09
 
 - 題庫答案 / Answer key：(1) A；(2) C；(3) D
-- 中文：先用 `float(input(...))` 取得數值，遇到 `-1` 停止，再以 `{:.2f}` 顯示平均。題庫選 A、C、D，但原 D 語法有誤；正確寫法是 `"{:.2f}".format(average)`。
-- English: Read each rating with `float(input(...))`, stop at `-1`, and display the average with `{:.2f}`. The key is A, C, D, but option D is malformed; use `"{:.2f}".format(average)`.
+- 中文：先用 `float(input(...))` 讀入評分，遇到 `-1` 停止。新版 D 的 `.format(average, '.2f')` 不會設定小數位數；須把格式寫進 `{:.2f}`，如 `"{:.2f}".format(average)`。
+- English: Read ratings with `float(input(...))` and stop at `-1`. Updated option D, `.format(average, '.2f')`, does not set decimal precision. Put the format inside `{:.2f}` instead: `"{:.2f}".format(average)`.
 
 ## Q10
 

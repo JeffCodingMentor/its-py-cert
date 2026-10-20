@@ -243,7 +243,7 @@ window.ITS_QUESTION_SOURCE =
 "  - A. `{average, '.2f}`\n" +
 "  - B. `.format.average.{2d}`\n" +
 "  - C. `.format(average, '.2d'))`\n" +
-"  - D. `.format(average:.2f))`\n" +
+"  - D. `.format(average, '.2f'))`\n" +
 "\n" +
 "**正確答案：** (1) A；(2) C；(3) D\n" +
 "\n" +
