@@ -5,7 +5,8 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_SOURCE = ROOT.parent / 'ITS_Python_題庫詳解.md'
+DEFAULT_SOURCE = ROOT.parent / 'docs' / 'ITS_Python_題庫詳解.md'
+LOCAL_OUTPUT = ROOT.parent / 'docs' / 'website-source' / 'explanations.js'
 
 
 def build(source_path=DEFAULT_SOURCE):
@@ -36,12 +37,13 @@ if __name__ == '__main__':
     args = parser.parse_args()
     if not args.source.is_file():
         parser.error('Local explanation source not found; specify its path with --source')
-    output = ROOT / 'assets' / 'explanations.js'
+    output = LOCAL_OUTPUT
     generated = build(args.source)
     if args.check:
         if not output.exists() or output.read_text(encoding='utf-8') != generated:
             raise SystemExit('Explanation data is out of date; run python scripts/build-explanations.py')
         print('PASS: 82 bilingual explanations match their Markdown source.')
     else:
+        output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(generated, encoding='utf-8')
-        print('Generated assets/explanations.js (82 bilingual explanations).')
+        print('Generated local explanation source. Run node scripts/build-data.cjs to update the website.')

@@ -1,6 +1,6 @@
 # ITS Python 證照題庫 v3.2
 
-原生 HTML、CSS、JavaScript 靜態網站，提供繁體中文與英文完整介面及 82 題題庫（原 77 題加 5 題補充題，畫面連續編號 01–82）。不需要安裝套件、建置或後端。
+原生 HTML、CSS、JavaScript 靜態網站，提供繁體中文與英文完整介面及 82 題題庫（原 77 題加 5 題補充題，畫面連續編號 01–82）。網站不需要後端或執行時建置；維護時使用 Node.js 產生編碼資料，不需安裝套件。
 
 [開啟網站](https://jeffcodingmentor.github.io/its-py-cert/) · [GitHub 儲存庫](https://github.com/JeffCodingMentor/its-py-cert)
 
@@ -72,11 +72,14 @@
 
 ## 維護題庫
 
-- `assets/questions.js` 為中文題庫，`assets/questions-en.js` 為英文題庫，兩種模式共用所選語言的資料。內容保留 Markdown，以 JavaScript 字串分行串接。
+- `assets/questions.js`、`assets/questions-en.js` 與 `assets/explanations.js` 是產生後的編碼資料，包含 UTF-8 位元組轉換、Base64 編碼及壓縮命名的還原程式，不直接放入可讀的題目、答案或詳解。瀏覽器載入後還原，兩種模式共用所選語言的資料。
+- 本機可讀的網站資料保存在儲存庫外的 `../docs/website-source/`，檔名為 `questions.js`、`questions-en.js`、`explanations.js`；這三份來源保留本次改動前網站的完整內容，不會因編碼改變題序、選項、答案或詳解。根目錄的中英文題庫 Markdown 可作為編輯參考，發布前應確認內容與網站來源版本一致。
+- 修改本機網站資料後，執行 `node scripts/build-data.cjs` 產生編碼檔並自動更新 HTML 的快取識別；來源位於其他目錄時，加上 `--source-dir "來源目錄"`。不要直接修改編碼後的 `assets` 題庫。
+- 編碼與混淆只是增加直接閱讀原始檔的難度，不是加密、登入保護或存取限制；瀏覽器顯示的內容仍可取得。Git 舊提交與舊標籤也不會因本次編碼被改寫。
 - 英文題庫以現有英文校稿稿為基礎；第 2、23、26、33、39、40、68 題已依線上中文版調整選項順序或補齊小題。英文第 78–82 題使用固定識別碼「補充1」至「補充5」，中英文畫面均接續顯示第 78–82 題。
-- 中英文更新後執行 `node tests/question-parity.cjs`，確認 82 題的識別碼、答案與選項群組一致。
+- 中英文更新後執行 `node scripts/build-data.cjs --check`、`node tests/encoded-data.cjs` 與 `node tests/question-parity.cjs`，確認編碼產物、快取識別與 82 題資料完整性。
 - 修改題目時保留固定題號（含「補充1」至「補充5」），不要以陣列位置替代題號。變更答案或大幅更換題庫時應同步考慮既有作答紀錄的相容性。
 - `assets/app.js` 負責呈現、搜尋、判分與保存；`assets/styles.css` 負責桌面及手機版面。
-- 中英文詳解原稿保留在儲存庫外的上一層 `../ITS_Python_題庫詳解.md`，不上傳 GitHub。修改原稿後執行 `python scripts/build-explanations.py`，更新網頁使用的靜態資料 `assets/explanations.js`，再執行 `python scripts/build-explanations.py --check` 確認與原稿一致；原稿位於其他位置時，可加上 `--source "原稿路徑"`。`node tests/question-parity.cjs` 不需要原稿即可檢查 82 題的中英文資料完整性。網站執行時不需要 Python。
+- 中英文詳解原稿保留在儲存庫外的 `../docs/ITS_Python_題庫詳解.md`，不上傳 GitHub。修改後執行 `python scripts/build-explanations.py` 更新本機 `../docs/website-source/explanations.js`，再執行 `node scripts/build-data.cjs` 更新網站編碼資料。`python scripts/build-explanations.py --check` 可確認本機詳解來源與 Markdown 一致；原稿位於其他位置時，可加上 `--source "原稿路徑"`。公開測試不需要本機原稿，網站執行時不需要 Python。
 - localStorage 使用 `its-py-cert:answers:v1:` 加網站所在目錄作為專屬鍵值；「清除紀錄」只刪除此網站題庫的紀錄。
-- 原始兩個 HTML 保留在上一層，額外備份位於上一層 `archive/pre-github-日期時間/`，不需上傳。
+- 舊版獨立 HTML 保留在上一層 `archive/`，不需上傳；目前入口是此儲存庫的 `index.html`。

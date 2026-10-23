@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const root = path.join(__dirname, '..');
-const context = { window: {} };
+const context = { window: {}, atob, TextDecoder };
 vm.createContext(context);
 for (const file of ['questions.js', 'questions-en.js', 'explanations.js']) {
   vm.runInContext(fs.readFileSync(path.join(root, 'assets', file), 'utf8'), context);
